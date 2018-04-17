@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.IoTSolutions.IotHubManager.Services;
 using Microsoft.Azure.IoTSolutions.IotHubManager.WebService.v1.Filters;
 using Microsoft.Azure.IoTSolutions.IotHubManager.WebService.v1.Models;
+using Microsoft.Azure.IoTSolutions.IotHubManager.Services.Models;
 
 namespace Microsoft.Azure.IoTSolutions.IotHubManager.WebService.v1.Controllers
 {
@@ -83,6 +84,18 @@ namespace Microsoft.Azure.IoTSolutions.IotHubManager.WebService.v1.Controllers
         public async Task DeleteAsync(string id)
         {
             await this.devices.DeleteAsync(id);
+        }
+
+        [HttpPost("{id}/heating")]
+        public async Task UpdateDeviceHeatingSwitch(string id, [FromBody] DeviceHeatingModel model)
+        {
+            await this.devices.UpdateHeatingSwitch(id, model);
+        }
+
+        [HttpGet("{id}/heating")]
+        public async Task<DeviceHeatingModel> GetDeviceHeatingSwitch(string id)
+        {
+            return await this.devices.GetHeatingSwitch(id);
         }
 
         /// <summary>

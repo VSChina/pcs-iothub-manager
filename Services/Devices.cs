@@ -21,12 +21,15 @@ namespace Microsoft.Azure.IoTSolutions.IotHubManager.Services
         Task<DeviceServiceModel> CreateAsync(DeviceServiceModel toServiceModel);
         Task<DeviceServiceModel> CreateOrUpdateAsync(DeviceServiceModel toServiceModel);
         Task DeleteAsync(string id);
+        Task UpdateHeatingSwitch(string id, DeviceHeatingModel model);
+        Task<DeviceHeatingModel> GetHeatingSwitch(string id);
     }
 
     public class Devices : IDevices
     {
         private const int MAX_GET_LIST = 1000;
         private const string QUERY_PREFIX = "SELECT * FROM devices";
+        private const string HEATING_KEY = "auto_heating";
 
         private RegistryManager registry;
         private string ioTHubHostName;
@@ -152,6 +155,28 @@ namespace Microsoft.Azure.IoTSolutions.IotHubManager.Services
         public async Task DeleteAsync(string id)
         {
             await this.registry.RemoveDeviceAsync(id);
+        }
+
+        public async Task UpdateHeatingSwitch(string id, DeviceHeatingModel model)
+        {
+            Twin twin = new Twin();
+            twin.Properties.Desired[HEATING_KEY] = model.HeatingSwitch ? bool.TrueString : bool.FalseString;
+            await this.registry.UpdateTwinAsync(id, twin, "*");
+        }
+
+        public async Task<DeviceHeatingModel> GetHeatingSwitch(string id)
+        {
+            var twin = await this.registry.GetTwinAsync(id);
+            DeviceHeatingModel model = new DeviceHeatingModel();
+            if(twin.Properties.Desired.Contains(HEATING_KEY))
+            {
+                bool heating;
+                if(bool.TryParse(twin.Properties.Desired[HEATING_KEY], out heating))
+                {
+                    model.HeatingSwitch = heating;
+                }
+            }
+            return model;
         }
 
         /// <summary>
