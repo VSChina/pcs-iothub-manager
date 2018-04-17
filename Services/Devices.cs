@@ -168,10 +168,10 @@ namespace Microsoft.Azure.IoTSolutions.IotHubManager.Services
         {
             var twin = await this.registry.GetTwinAsync(id);
             DeviceHeatingModel model = new DeviceHeatingModel();
-            if(twin.Properties.Desired.Contains(HEATING_KEY))
+            if(twin.Properties.Reported.Contains(HEATING_KEY))
             {
                 bool heating;
-                if(bool.TryParse(twin.Properties.Desired[HEATING_KEY].ToString(), out heating))
+                if(bool.TryParse(twin.Properties.Reported[HEATING_KEY].ToString(), out heating))
                 {
                     model.HeatingSwitch = heating;
                 }
