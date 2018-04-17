@@ -160,7 +160,7 @@ namespace Microsoft.Azure.IoTSolutions.IotHubManager.Services
         public async Task UpdateHeatingSwitch(string id, DeviceHeatingModel model)
         {
             Twin twin = new Twin();
-            twin.Properties.Desired[HEATING_KEY] = model.HeatingSwitch ? bool.TrueString : bool.FalseString;
+            twin.Properties.Desired[HEATING_KEY] = model.HeatingSwitch;
             await this.registry.UpdateTwinAsync(id, twin, "*");
         }
 
@@ -171,7 +171,7 @@ namespace Microsoft.Azure.IoTSolutions.IotHubManager.Services
             if(twin.Properties.Desired.Contains(HEATING_KEY))
             {
                 bool heating;
-                if(bool.TryParse(twin.Properties.Desired[HEATING_KEY], out heating))
+                if(bool.TryParse(twin.Properties.Desired[HEATING_KEY].ToString(), out heating))
                 {
                     model.HeatingSwitch = heating;
                 }
